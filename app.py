@@ -714,8 +714,31 @@ async function analyzeText() {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({text})
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Prediction failed.");
+        // Read the body as text first so empty/non-JSON server responses
+        // produce a useful error instead of "Unexpected end of JSON input".
+        const responseText = await response.text();
+        let data = {};
+
+        if (responseText.trim()) {
+            try {
+                data = JSON.parse(responseText);
+            } catch (_parseError) {
+                throw new Error(
+                    `Server returned a non-JSON response (HTTP ${response.status}). Check Render logs.`
+                );
+            }
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || `Prediction failed (HTTP ${response.status}). Check Render logs.`
+            );
+        }
+
+        if (!data || typeof data.severity !== "string" ||
+            typeof data.confidence !== "number" || !data.probabilities) {
+            throw new Error("The server response is missing prediction fields. Check Render logs.");
+        }
 
         lastTextResult = data;
         document.getElementById("textResult").style.display = "block";
