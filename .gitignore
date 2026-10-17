@@ -1,0 +1,32 @@
+
+# Python environments and caches
+venv/
+.venv/
+.venv-fer/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Datasets and generated files
+data/
+outputs/
+*.log
+debug_received_image.jpg
+
+# Archives, installers, and backups
+*.zip
+*.exe
+*.backup
+app.py.backup
+
+# Local IDE and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
